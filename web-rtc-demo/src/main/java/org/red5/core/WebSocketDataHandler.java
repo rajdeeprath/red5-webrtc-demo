@@ -3,6 +3,7 @@ package org.red5.core;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +38,12 @@ public class WebSocketDataHandler extends WebSocketDataListener {
 		{
 			username = getUserName(arg0);
 			roomname = getRoomName(arg0);
+			
+			if(username == null || username.equals(""))
+			throw new Exception("Unable to login. Invalid username");
+			
+			if(roomname == null || roomname.equals(""))
+			throw new Exception("Unable to login. Invalid roomname");
 			
 			if(connections.containsKey(username))
 			throw new Exception("Unable to login. This user name is already taken");
@@ -163,17 +170,38 @@ public class WebSocketDataHandler extends WebSocketDataListener {
 	
 	public String getUserName(WebSocketConnection conn)
 	{
-		Map<String, Object> map = conn.getQuerystringParameters();
-		String username = (String) map.get("?username");
+		Map<String, Object> map = getQueryParameters(conn);
+		String username = (String) map.get("username");
 		return username;
 	}
 	
 	
 	public String getRoomName(WebSocketConnection conn)
 	{
-		Map<String, Object> map = conn.getQuerystringParameters();
+		Map<String, Object> map = getQueryParameters(conn);
 		String room = (String) map.get("room");
 		return room;
+	}
+	
+	
+	
+	private Map<String, Object> getQueryParameters(WebSocketConnection conn)
+	{
+		Map<String, Object> map = conn.getQuerystringParameters();
+		Map<String, Object> sanitized = new HashMap<String, Object>();
+		
+		Iterator<Entry<String, Object>> it = map.entrySet().iterator();
+	    while (it.hasNext()) {
+	        Map.Entry<String, Object> pair = (Map.Entry<String, Object>)it.next();
+	        
+	        String key = pair.getKey();
+	        Object value = pair.getValue();
+	        key = key.replace("?", "");	        		
+	        
+	        sanitized.put(key, value);
+	    }
+	    
+	    return sanitized;
 	}
 	
 	
