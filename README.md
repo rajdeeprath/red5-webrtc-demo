@@ -40,5 +40,25 @@ mvn package
 
 Deploy your application by copying the war file into your red5/webapps directory.
 
-After deploy is complete, restart red5 and go to http://localhost:5080/web-rtc-demo/ index.html in your browser 
+After deploy is complete, restart red5 and go to http://localhost:5080/web-rtc-demo/user=<username> in your browser 
+
+
+>> The application accepts connections with a username and a room parameter which are supplied via query string of the WebSocket url. User name must be unique for each connection.
+
+
+
+
+### Client side application (index.html)
+
+
+The client side application is a simple WebRTC sample built using javascript and WebRTC api. No third party libraries are used other than Jquery. The client application connects to Red5 server app over websocket for signaling, through the page : http://localhost:5080/web-rtc-demo/user=<username>
+
+`username` parameter is mandatory and must be unique when you testing this in two different browser windows. The application code default to a room name `shared`. This can be edit in the index.html file.
+
+
+```
+var room = "shared";
+```
+
+
 
