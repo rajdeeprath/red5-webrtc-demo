@@ -29,7 +29,7 @@ The red5 web-rtc-demo application is a websocket host, which allws you to connec
 
 #### FEATURES
 
-* Allows only 2 users per soom
+* Allows only 2 users per room
 * Requires parameters **username** and **room** to be provided via websocket url in query string
 * Rooms are destroyed once all users are disconnected
 * Intelligently sends sender information to receiever ina  room
