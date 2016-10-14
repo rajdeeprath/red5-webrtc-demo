@@ -41,7 +41,7 @@ The red5 web-rtc-demo application is a websocket host, which allws you to connec
 You can build the application usign maven.
 
 ```
-mvn package
+mvn clean package
 ```
 
 Deploy your application by copying the war file into your red5/webapps directory.
@@ -61,7 +61,7 @@ The client side application is a simple WebRTC sample built using javascript and
 
 
 ```
-http://localhost:5080/web-rtc-demo/user=<username>
+http://localhost:5080/web-rtc-demo/?user=<username>
 
 ```
 
