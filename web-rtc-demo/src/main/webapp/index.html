@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Simple WebRTC Demo</title>
+<style>
+.hot-container p { margin-top: 10px; }
+a { text-decoration: none; margin: 0 10px; }
+
+.hot-container {
+min-height: 100px;
+margin-top: 100px;
+width: 100%;
+text-align: center;
+}
+
+a.btn {
+display: inline-block;
+color: #666;
+background-color: #eee;
+text-transform: uppercase;
+letter-spacing: 2px;
+font-size: 12px;
+padding: 10px 30px;
+border-radius: 5px;
+-moz-border-radius: 5px;
+-webkit-border-radius: 5px;
+border: 1px solid rgba(0,0,0,0.3);
+border-bottom-width: 3px;
+}
+
+a.btn:hover {
+	background-color: #e3e3e3;
+	border-color: rgba(0,0,0,0.5);
+}
+
+a.btn:active {
+	background-color: #CCC;
+	border-color: rgba(0,0,0,0.9);
+}
+
+/* blue button */
+
+a.btn.btn-blue {
+background-color: #699DB6;
+border-color: rgba(0,0,0,0.3);
+text-shadow: 0 1px 0 rgba(0,0,0,0.5);
+color: #FFF;
+}
+
+a.btn.btn-blue:hover {
+	background-color: #4F87A2;
+	border-color: rgba(0,0,0,0.5);
+}
+
+a.btn.btn-blue:active {
+	background-color: #3C677B;
+	border-color: rgba(0,0,0,0.9);
+}
+
+/* red button */
+
+a.btn.btn-red {
+background-color: #E48681;
+border-color: rgba(0,0,0,0.3);
+text-shadow: 0 1px 0 rgba(0,0,0,0.5);
+color: #FFF;
+}
+
+a.btn.btn-red:hover {
+	background-color: #DA4F49;
+	border-color: rgba(0,0,0,0.5);
+}
+
+a.btn.btn-red:active {
+	background-color: #B32C24;
+	border-color: rgba(0,0,0,0.9);
+}
+
+#display{
+	background-color: #000000;
+	width:320px;
+	height:240px;
+}
+#remote{
+	background-color: #000000;
+	width:320px;
+	height:240px;
+}
+.ta3 {
+	width:700px;
+	height:100px;
+	border:2px dashed #D1C7AC;
+}
+		
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script type="text/javascript">
+var stream;
+var iconnection;
+var ws;
+var user = (getParameterByName("user") || "rajdeep");
+var icecandidates = [];
+var room = "shared";
+
+function hasUserMedia(){
+	return !!(navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia);
+}
+
+function onMediaSuccess(s)
+{
+	consolelog("Media stream acquired. Setting local stream.");
+	
+	stream = s;
+	$( "#display" ).attr('src', window.URL.createObjectURL(stream));
+	initPeerConnection();
+}
+
+function onMediaError(e){
+	consolelog("An error occurred in acquiring local stream " + e.toString());
+}
+
+
+function onLocalDescriptionSuccess(){
+	consolelog("On local description set");
+}
+
+
+function onLocalDescriptionError(err){
+	consolelog("An error occurred " + err.toString());
+}
+
+
+function onOfferSuccess(offer){
+	
+	consolelog("Offer created");
+	consolelog(offer);
+	
+	iconnection.setLocalDescription(offer, onLocalDescriptionSuccess, onLocalDescriptionError);
+	
+	var message = {};
+	message.sender = user;
+	message.timestamp = new Date().getTime();
+	message.type = 'offer';
+	message.content = JSON.stringify(offer);
+	send(message);
+}
+
+function onOfferError(err){
+	consolelog("An error occurred creating offer" + err.toString());
+}
+
+function acquireStream(){
+	if(hasUserMedia())
+	{
+		var media_request = {video:{width: 320, height: 240}, audio: true};
+		navigator.getUserMedia =  navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+		navigator.getUserMedia(media_request, onMediaSuccess, onMediaError);
+	}
+	else
+	{
+		consolelog("Cannot acquire stream from device(s)");
+	}
+}
+
+function initPeerConnection(){
+		
+	if(typeof mozRTCPeerConnection === 'function')
+	RTCPeerConnection = mozRTCPeerConnection;
+	else if(typeof webkitRTCPeerConnection === 'function')
+	RTCPeerConnection = webkitRTCPeerConnection;
+	
+	var config = {
+		iceServers: [{ urls: 'stun:stun3.l.google.com:19302' }]
+	};
+	
+	consolelog("Creating peer connection");
+	iconnection = new RTCPeerConnection(config);
+	
+	consolelog("Adding media stream to peer connection");
+	iconnection.addStream(stream);
+	
+	iconnection.onaddstream = function(e){
+			// set remote stream
+			$( "#remote" ).attr('src', window.URL.createObjectURL(e.stream));
+			consolelog("Setting remote stream" + e.toString());
+			consolelog(e.stream);
+	};
+		
+	iconnection.onicecandidate = function(event){
+		
+		if(event.candidate){
+			consolelog("onicecandidate");
+			consolelog(event.candidate);			
+			icecandidates.push(event.candidate);
+			// send all ice candidates to other party
+			
+			consolelog("Sending icecandidate");
+			var message = {};
+			message.sender = user;
+			message.timestamp = new Date().getTime();
+			message.type = 'candidate';
+			message.content = JSON.stringify(event.candidate);
+			send(message);
+		}
+	};
+}
+
+
+function createAndSendOffer(){
+	consolelog("Sending offer");
+	consolelog("signallingState = " + iconnection.signalingState);
+	iconnection.createOffer(onOfferSuccess, onOfferError, { 'mandatory': { 'OfferToReceiveAudio': true, 'OfferToReceiveVideo': true } });
+}
+
+
+function getParameterByName(name, url) {
+    if (!url) url = window.location.href;
+    name = name.replace(/[\[\]]/g, "\\$&");
+    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+        results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, " "));
+}
+
+
+function send($data) {
+	ws.send(JSON.stringify($data));
+}
+
+
+function connectToServer($user, $room){
+
+	var url = "ws://localhost:8081/web-rtc-demo?username="+$user+"&room="+$room;
+	
+	consolelog("Connecting to websocket");
+	consolelog("url : " + url);
+	
+	// Let us open a web socket
+	ws = new WebSocket(url);
+	
+	
+	ws.onopen = function()
+	{
+		consolelog("connected to websocket");
+		acquireStream();
+	};
+
+	ws.onmessage = function (evt) 
+	{ 
+		var rawMessage = evt.data;
+		var $message = JSON.parse(rawMessage);
+		
+		switch($message.type)
+		{
+			case "offer":
+			handleOffer($message);
+			break;
+			
+			case "candidate":
+			handleCandidate($message);
+			break;			
+			
+			case "answer":
+			handleAnswer($message);
+			break;
+			
+			case "arbitrary":
+			handleArbitrary($message);
+			break;
+		}
+	};
+
+	ws.onclose = function()
+	{ 
+		consolelog("websocket connection closed");
+	};
+}
+
+
+
+$(document).ready(function() 
+{
+	$("#username").html("Username :  " + user + " | " + "Roomname : " + room);
+	$("#btnCreateAndSendOffer").click(function(){
+		consolelog("CreateAndSendOffer");
+		createAndSendOffer();	
+	});	
+
+	
+	connectToServer(user, room);
+});
+
+
+
+function handleOffer($message){
+	
+	consolelog("handleOffer");
+	
+	var peerAnswer;
+	var offer = JSON.parse($message.content);
+	consolelog(offer);
+	iconnection.setRemoteDescription(new RTCSessionDescription(offer));
+	
+	$('#btnCreateAndSendOffer').prop('disabled', true);
+	
+	iconnection.createAnswer({ 'mandatory': { 'OfferToReceiveAudio': true, 'OfferToReceiveVideo': true } }).then(function(answer) 
+	{
+		consolelog("Creating answer");
+		peerAnswer = answer;
+		consolelog(peerAnswer);
+		return iconnection.setLocalDescription(answer);
+	})
+	.then(function() 
+	{
+		consolelog("Sending answer to offerer");
+		
+		var message = {};
+		message.sender = user;
+		message.timestamp = new Date().getTime();
+		message.type = 'answer';
+		message.content = JSON.stringify(peerAnswer);
+		send(message);
+	})
+	.catch(function(e){
+		consolelog(e);
+	});
+	
+}
+
+
+function handleCandidate($message){
+	
+	consolelog("handleCandidate");
+	var icecandidate = JSON.parse($message.content);
+	consolelog(icecandidate);
+	iconnection.addIceCandidate(new RTCIceCandidate(icecandidate));
+}
+
+
+function handleAnswer($message){
+
+	consolelog("handleAnswer");
+	var answer = JSON.parse($message.content);
+	consolelog(answer);
+	iconnection.setRemoteDescription(new RTCSessionDescription(answer));
+	
+	$('#btnCreateAndSendOffer').prop('disabled', true);
+	
+}
+
+
+function handleArbitrary($message){
+	// TO DO
+	$innerMessage  = $message.content;
+	switch($innerMessage.subject)
+	{
+		case 'roomJoin':		
+		break;
+		
+		case 'roomLeave':
+		break;
+		
+		case 'call':
+		break;
+		
+		case 'accept':
+		break;
+		
+		case 'accepted':
+		break;
+		
+		case 'reject':
+		break;
+		
+		case 'rejected':
+		break;
+	}
+}
+
+
+function consolelog($message)
+{
+	var psconsole = $('#ta3');
+	
+	if (!(typeof $message === 'string' || $message instanceof String))
+	{
+		$message = JSON.stringify($message);
+	}
+
+	$('#ta3').append("\r\n"); 
+	$('#ta3').append($message); 
+	
+    if(psconsole.length)
+    psconsole.scrollTop(psconsole[0].scrollHeight - psconsole.height());
+}
+
+</script>
+</head>
+<body>
+
+
+<div class="hot-container">
+
+	<p>
+		<video autoplay id="display"></video>				
+		&nbsp;
+		<video autoplay id="remote"></video>
+	</p>
+
+	<p>
+		<div id="username"></div>		
+	</p>
+
+		<button class="btn" id="btnCreateAndSendOffer">Create & Send Offer</button>
+		
+	</p>
+	
+	<p>
+		<textarea name="ta3" id="ta3" class="ta3"></textarea>
+	</p>
+</div>
+
+</body>
+</html>
