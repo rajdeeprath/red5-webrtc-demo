@@ -35,6 +35,13 @@ The red5 web-rtc-demo application is a websocket host, which allws you to connec
 * Intelligently sends sender information to receiever ina  room
 * Allows sending arbitrary messages
 
+
+The client application connects to the red5 websocket application using the following endpoint format: 
+
+```
+var url = "ws://localhost:8081/web-rtc-demo?username="+$user+"&room="+$room;
+```
+
 #### BUILDING THE SERVER APP
 
 
