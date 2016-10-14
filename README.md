@@ -1,6 +1,4 @@
-# red5-web-rtc-demo
-
-Red5 WEB RTC DEMO APPLICATION (CLIENT AND SERVER)
+# Red5 WEB RTC DEMO APPLICATION (CLIENT AND SERVER)
 
 ![Chrome](images/chrome.png) | ![Firefox](images/firefox.png)
 
