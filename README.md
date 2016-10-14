@@ -1,6 +1,6 @@
 # Red5 WEB RTC DEMO APPLICATION (CLIENT AND SERVER)
 
-![Chrome](images/chrome.png) | ![Firefox](images/firefox.png)
+![Chrome](images/chrome.png) | ![Firefox](images/firefox.png) | ![Red5](images/red5.png)
 
 ### Introduction
 
@@ -27,7 +27,15 @@ The red5 web-rtc-demo application is a websocket host, which allws you to connec
 >> This is not required if you are testing thinsg locally.
 
 
-BUILDING THE APP
+#### FEATURES
+
+* Allows only 2 users per soom
+* Requires parameters **username** and **room** to be provided via websocket url in query string
+* Rooms are destroyed once all users are disconnected
+* Intelligently sends sender information to receiever ina  room
+* Allows sending arbitrary messages
+
+#### BUILDING THE SERVER APP
 
 
 You can build the application usign maven.
@@ -49,7 +57,13 @@ After deploy is complete, restart red5 and go to http://localhost:5080/web-rtc-d
 ### Client side application (index.html)
 
 
-The client side application is a simple WebRTC sample built using javascript and WebRTC api. No third party libraries are used other than Jquery. The client application connects to Red5 server app over websocket for signaling, through the page : http://localhost:5080/web-rtc-demo/user=<username>
+The client side application is a simple WebRTC sample built using javascript and WebRTC api. No third party libraries are used other than Jquery. The client application connects to Red5 server app over websocket for signaling, through the page : 
+
+
+```
+http://localhost:5080/web-rtc-demo/user=<username>
+
+```
 
 `username` parameter is mandatory and must be unique when you testing this in two different browser windows. The application code default to a room name `shared`. This can be edit in the index.html file.
 
@@ -64,6 +78,47 @@ var room = "shared";
 
 >> The application has been tested on chrome and firefox.
 
+
+#### FEATURES
+
+* Tested on Chrome and Firefox
+* Requires parameters **username** via url in query string
+* Rooms are destroyed once all users are disconnected
+* Intelligently relays sender data to receiever in the same room
+* Supports sending arbitrary messages
+
+
+#### RUNNING THE CLIENT APP
+
+* Open the url in browser #1
+```
+http://localhost:5080/web-rtc-demo/user=user1
+
+```
+
+* Accept media permission request to allow acquition of MediaStream on browser #1
+
+* Open the url in browser #2
+
+```
+http://localhost:5080/web-rtc-demo/user=user2
+
+```
+
+* Accept media permission request to allow acquition of MediaStream browser #1
+
+* Click "Create & Send Offer" on any one browser window to initialize communication
+
+* The offer is sent to the other user in the room and it auto-accepted
+
+* The other user client returns answer to the offerer
+
+* Offerer handles the answer
+
+* Session is live.
+
+
+>> Watch the text area console for logging information
 
 <br>
 
