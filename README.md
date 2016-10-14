@@ -92,7 +92,7 @@ var room = "shared";
 
 * Open the url in browser #1
 ```
-http://localhost:5080/web-rtc-demo/user=user1
+http://localhost:5080/web-rtc-demo/?user=user1
 
 ```
 
@@ -101,7 +101,7 @@ http://localhost:5080/web-rtc-demo/user=user1
 * Open the url in browser #2
 
 ```
-http://localhost:5080/web-rtc-demo/user=user2
+http://localhost:5080/web-rtc-demo/?user=user2
 
 ```
 
