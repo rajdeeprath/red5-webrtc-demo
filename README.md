@@ -24,7 +24,7 @@ The red5 web-rtc-demo application is a websocket host, which allws you to connec
 
 ```
 
->> This is not required if you are testing thinsg locally.
+>> This is not required if you are testing things locally.
 
 
 #### FEATURES
