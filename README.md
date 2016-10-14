@@ -60,6 +60,8 @@ After deploy is complete, restart red5 and go to http://localhost:5080/web-rtc-d
 
 
 <br>
+---
+<br>
 
 ### Client side application (index.html)
 
