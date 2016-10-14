@@ -1,6 +1,6 @@
 # Red5 WEB RTC DEMO APPLICATION (CLIENT AND SERVER)
 
-![Chrome](images/chrome.png) | ![Firefox](images/firefox.png)
+![Chrome](images/chrome.png) | ![Firefox](images/firefox.png) | ![Red5](images/red5.png)
 
 ### Introduction
 
