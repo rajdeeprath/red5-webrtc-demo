@@ -2,12 +2,12 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>red5</groupId>
-  <artifactId>myapp</artifactId>
+  <artifactId>web-rtc-demo</artifactId>
   <packaging>war</packaging>
-  <version>0.0.1-SNAPSHOT</version>
-  <name>myapp</name>
+  <version>0.0.1</version>
+  <name>web-rtc-demo</name>
   <url>http://maven.apache.org</url>
-  <description>Sample Red5 maven application</description>
+  <description>Sample Red5 WebRTC signaling maven application</description>
     <licenses>
         <license>
             <name>Apache 2</name>
@@ -34,6 +34,7 @@
         <bc.version>1.53</bc.version>
     </properties>
     <build>
+    	<finalName>web-rtc-demo</finalName>
         <defaultGoal>package</defaultGoal>
         <plugins>
             <plugin>
