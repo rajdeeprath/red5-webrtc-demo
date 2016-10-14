@@ -2,7 +2,7 @@
 
 Red5 WEB RTC DEMO APPLICATION (CLIENT AND SERVER)
 
-
+![Chrome](images/chrome.png) | ![Firefox](images/firefox.png)
 
 ### Introduction
 
@@ -61,4 +61,10 @@ var room = "shared";
 ```
 
 
+>> The server side application allows only 2 users per room, so you cannot open more than 2 browser windows. After the second connection all other connections will be denied.
 
+
+>> The application has been tested on chrome and firefox.
+
+
+#### Application Window
