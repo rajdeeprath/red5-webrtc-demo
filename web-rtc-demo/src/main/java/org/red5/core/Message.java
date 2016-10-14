@@ -9,6 +9,20 @@ public class Message {
 	Object content;
 	
 	Long timestamp;
+	
+	
+	public Message(String type, String sender, Object content, Long timestamp)
+	{
+		this.type = type;
+		this.sender = sender;
+		this.content = content;
+		this.timestamp = timestamp;		
+	}
+	
+	public Message()
+	{
+		
+	}
 
 	public String getType() {
 		return type;

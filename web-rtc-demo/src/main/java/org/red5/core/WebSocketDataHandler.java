@@ -24,7 +24,7 @@ public class WebSocketDataHandler extends WebSocketDataListener {
 	private static ConcurrentHashMap<String, List<String>> roomMap = new ConcurrentHashMap<String, List<String>>();
 	
 	{
-		setProtocol("holla");
+		setProtocol(null);
 	}
 
 	@Override
@@ -102,13 +102,15 @@ public class WebSocketDataHandler extends WebSocketDataListener {
 				{
 					outgoing.type = incoming.type;
 				}
-				else if(incoming.type.equalsIgnoreCase("stream"))
+				else if(incoming.type.equalsIgnoreCase("arbitrary"))
 				{
 					outgoing.type = incoming.type;
 				}
 				else
 				{
 					outgoing.type = "unknown";
+					sender.send(gson.toJson(new Message(outgoing.type, username, "error", System.currentTimeMillis())));
+					return;
 				}
 				
 				outgoing.content = incoming.content;
