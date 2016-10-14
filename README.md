@@ -11,7 +11,9 @@ In this example app we see how Red5 websocket helps in managing sinple chat room
 
 ### Server side application (web-rtc-demo)
 
-The red5 web-rtc-demo application is a websocket host, which allws you to connect to it via standard HTML5 websocket connections. The application lsitens on the default red5 websocket port **8081**, so your server needs to allow access to this port if its being accessed from outside. This means that the localhost and port must be configured in the red5/conf/jee-container.xml file.
+The red5 web-rtc-demo application is a websocket host, which allows you to connect to it via standard HTML5 websocket connections. The application listens on the default red5 websocket port **8081**, so your server needs to allow access to this port if its being accessed from outside. This means that the localhost and port must be configured in the red5/conf/jee-container.xml file.
+
+>> The stream travels from Peer to Peer. Red5 acts as a signaling server in between the two peers.
 
 ```
 <bean id="webSocketTransport" class="org.red5.net.websocket.WebSocketTransport">
