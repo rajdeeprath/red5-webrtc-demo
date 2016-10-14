@@ -1,4 +1,4 @@
-# Simple Red5 WEB RTC DEMO APPLICATION (CLIENT AND SERVER)
+# Simple Red5 signaled WEB RTC DEMO (CLIENT AND SERVER)
 
 ![Chrome](images/chrome.png) | ![Firefox](images/firefox.png) | ![Red5](images/red5.png)
 
