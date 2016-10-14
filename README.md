@@ -44,7 +44,7 @@ After deploy is complete, restart red5 and go to http://localhost:5080/web-rtc-d
 >> The application accepts connections with a username and a room parameter which are supplied via query string of the WebSocket url. User name must be unique for each connection.
 
 
-
+<br>
 
 ### Client side application (index.html)
 
@@ -65,4 +65,10 @@ var room = "shared";
 >> The application has been tested on chrome and firefox.
 
 
+<br>
+
+
 #### Application Window
+
+
+![Firefox](images/web_rtc_demo.png)
