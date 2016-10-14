@@ -30,12 +30,13 @@ public class WebSocketDataHandler extends WebSocketDataListener {
 	@Override
 	public void onWSConnect(WebSocketConnection arg0) {
 		// TODO Auto-generated method stub
-
+		String username = null;
+		String roomname = null;
 		
 		try
 		{
-			String username = getUserName(arg0);
-			String roomname = getRoomName(arg0);
+			username = getUserName(arg0);
+			roomname = getRoomName(arg0);
 			
 			if(connections.containsKey(username))
 			throw new Exception("Unable to login. This user name is already taken");
@@ -235,6 +236,29 @@ public class WebSocketDataHandler extends WebSocketDataListener {
 	
 	
 	
+	public List<String> getRoomUsers(String room) throws Exception
+	{
+		List<String> users;
+		
+		if(roomMap.containsKey(room))
+		{
+			users = roomMap.get(room);
+		}
+		else
+		{
+			throw new Exception("Room not found");
+		}
+		
+		
+		if(users.size() > 0)
+		return users;
+		else
+		return null;
+	}
+	
+	
+	
+	
 	public WebSocketConnection getReceieverConnection(String room, String me) throws Exception
 	{
 		List<String> users;
@@ -274,5 +298,28 @@ public class WebSocketDataHandler extends WebSocketDataListener {
 		}
 		
 		return;
+	}
+	
+	
+	public void notifyEvent(String room, String event, Object data)
+	{
+		try
+		{
+			// send room join notification to all in this room
+			List<String> users = getRoomUsers(room);
+			if(users != null){
+				Gson gson = new Gson();
+				for(String user : users)
+				{
+					WebSocketConnection conn = connections.get(user);
+					Message m = new Message("arbitrary", "server", new InnerMessage(event, data), System.currentTimeMillis());
+					conn.send(gson.toJson(m));
+				}
+			}
+		}
+		catch(Exception e)
+		{
+			logger.error(e.getMessage());
+		}
 	}
 }
