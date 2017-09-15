@@ -350,4 +350,12 @@ public class WebSocketDataHandler extends WebSocketDataListener {
 			logger.error(e.getMessage());
 		}
 	}
+
+
+
+	@Override
+	public void stop() {
+		// TODO Auto-generated method stub
+		
+	}
 }
